@@ -1,0 +1,10 @@
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\bin\Debug\Autocorrector.exe.config
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\bin\Debug\Autocorrector.exe
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\bin\Debug\Autocorrector.pdb
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\obj\Debug\Autocorrector.csprojResolveAssemblyReference.cache
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\obj\Debug\Autocorrector.Form1.resources
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\obj\Debug\Autocorrector.Properties.Resources.resources
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\obj\Debug\Autocorrector.csproj.GenerateResource.Cache
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\obj\Debug\Autocorrector.exe
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\obj\Debug\Autocorrector.pdb
+C:\Users\Mark\Desktop\Projects\Autocorrector\Autocorrector\bin\Debug\DynamicSugar.dll
