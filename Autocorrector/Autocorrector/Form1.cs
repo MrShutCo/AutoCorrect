@@ -8,16 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Controls;
 
 namespace Autocorrector {
-    public partial class Form1 : Form {
+    public partial class form1 : Form {
 
         public Dictionary<string, int> WordCountList;
         public List<string> WordList;
         SpellCorrector SP;
         public int TotalWords;
 
-        public Form1() {
+        public form1() {
             InitializeComponent();
             WordCountList = Helpers.LoadCorpus();
             SP = new SpellCorrector(WordCountList);
@@ -28,27 +29,42 @@ namespace Autocorrector {
             }
         }
 
-        private void ErrorCheckButton_Click(object sender, EventArgs e) {
-            
-        }
 
-        private void TextArea_TextChanged(object sender, EventArgs e) {
-            string paragraph = TextArea.Text;
-            List<string> wordsSaid = Helpers.ConvertStringToList(paragraph);
-            foreach (string s in wordsSaid) {
-                if (!Helpers.IsValidWord(WordList, s)) {
-                    if (TextArea.Find(s) != -1) {
-                        TextArea.SelectionStart = TextArea.Find(s);
-                        TextArea.SelectionLength = TextArea.SelectionStart + s.Length;
-                        TextArea.SelectionColor = Color.Red;
-                    }
-                }
-                else {
-                    TextArea.SelectionStart = TextArea.Find(s);
-                    TextArea.SelectionLength = TextArea.SelectionStart + s.Length;
-                    TextArea.SelectionColor = Color.Black;
+        //FIXME: Make it so predictions go away when you type
+        private void WordPredictor_TextChanged(object sender, EventArgs e) {
+            string word = WordPredictor.Text;
+            List<string> correctionTop = SP.Correct(word);
+            guess1.Text = "Guess 1: " + correctionTop.Last();
+            //Shit, still borked.... Honestly might be right idea
+            guess2.Text = "Guess 2: ";
+            guess3.Text = "Guess 3: ";
+            if (correctionTop.Count > 1) {
+                guess2.Text = "Guess 2: " + correctionTop[correctionTop.Count - 1];
+                if (correctionTop.Count > 2) {
+                    guess3.Text = "Guess 3: " + correctionTop[correctionTop.Count - 2];
                 }
             }
+        }
+
+        private void ErrorCheckButton_Click_1(object sender, EventArgs e) {
+            string paragraph = TextEnterField.Text;
+            //DONT EVEN WORRY ABOUT IT
+            paragraph += ".";
+            List<string> wordsSaid = Helpers.ConvertStringToList(paragraph);
+            for (int i = 0; i < wordsSaid.Count; i++) {
+                string word = wordsSaid[i];
+                if (!Helpers.IsValidWord(WordList, word)) {
+                    TextArea.SelectionColor = Color.Red;
+                    TextArea.AppendText(word);
+                    TextArea.SelectionColor = Color.Black;
+                    TextArea.AppendText(" ");
+                }
+                else {
+                    TextArea.AppendText(word + " ");
+                }
+            }
+            TextArea.AppendText("\n");
+            TextEnterField.Text = "";
         }
 
         public class SpellCorrector {
@@ -95,7 +111,7 @@ namespace Autocorrector {
 
                 return words.Filter(w => this.DWORDS.ContainsKey(w));
             }
-            public string Correct(string word) {
+            public List<string> Correct(string word) {
 
                 var candidateWords = this.Known(DS.List(word));
                 if (candidateWords.Count == 0)
@@ -104,8 +120,7 @@ namespace Autocorrector {
                     candidateWords = this.KnownEdits2(word);
                 if (candidateWords.Count == 0)
                     candidateWords = DS.List(word);
-
-                return this.DWORDS.Max(candidateWords);
+                return candidateWords;
             }
 
         }
@@ -123,6 +138,27 @@ namespace Autocorrector {
                     WordCountList.Add(key, value);
                 }
                 return WordCountList;
+            }
+
+            public static Dictionary<string[], int> LoadTwoGram(string name) {
+                Dictionary<string[], int> TwoGramList = new Dictionary<string[], int>();
+                System.IO.StreamReader file = new System.IO.StreamReader(name + ".txt");
+                string line;
+                while ((line = file.ReadLine()) != null) {
+                    string[] Words = line.Split(' ');
+                    if (Words.Count() < 2) continue;
+                    for (int i = 0; i < Words.Count() - 1; i++) {
+                        string[] tempGram = new string[] { Words[i], Words[i + 1] };
+                        if (!TwoGramList.ContainsKey(tempGram)) {
+                            TwoGramList.Add(tempGram, 1);
+                        }
+                        else {
+                            TwoGramList[tempGram] += 1;
+                        }
+                        
+                    }
+                }
+                return TwoGramList;
             }
 
             public static Dictionary<string, int> UpdateCorpus(Dictionary<string, int> WordCountList, string fileName) {
